@@ -1,0 +1,34 @@
+{
+  "name": "ingestion-engine/connector",
+  "description": "IngestionEngine connector for Magento 2",
+  "require": {
+    "magento/framework": ">=100.0.1",
+    "magento/module-backend": ">=100.0.1",
+    "magento/module-catalog": ">=100.0.1",
+    "magento/module-eav": ">=100.0.1",
+    "magento/module-store": ">=100.0.1",
+    "php-http/guzzle6-adapter": "^1.1",
+    "tcdent/php-restclient": "^0.1.7"
+  },
+  "type": "magento2-module",
+  "version": "100.4.15",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "IngestionEngine\\Connector\\": ""
+    }
+  },
+  "authors": [
+    {
+      "name": "bruce huang",
+      "homepage": "https://www.silksoftware.com/",
+      "role": "Developer"
+    }
+  ]
+}

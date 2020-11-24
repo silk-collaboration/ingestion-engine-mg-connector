@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<!--
+/**
+ * @author    IngestionEngine <sales@silksoftware.com>
+ * @copyright 2020 IngestionEngine
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      https://www.silksoftware.com/
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="IngestionEngine_Connector::ingestionengine_connector" title="IngestionEngine Connector" module="IngestionEngine_Connector" sortOrder="110" parent="Magento_Backend::system" resource="IngestionEngine_Connector::ingestionengine_connector"/>
+        <add id="IngestionEngine_Connector::import" title="Import" module="IngestionEngine_Connector" sortOrder="10" parent="IngestionEngine_Connector::ingestionengine_connector" resource="IngestionEngine_Connector::import" action="ingestionengine_connector/import"/>
+        <add id="IngestionEngine_Connector::ingestionengine_connector_log" title="Log" module="IngestionEngine_Connector" sortOrder="20" parent="IngestionEngine_Connector::ingestionengine_connector" resource="IngestionEngine_Connector::ingestionengine_connector_log" action="ingestionengine_connector/log" />
+    </menu>
+</config>

@@ -1,0 +1,43 @@
+<?php
+/**
+ * @author    IngestionEngine <sales@silksoftware.com>
+ * @copyright 2020 IngestionEngine
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      https://www.silksoftware.com/
+ */
+
+/**
+ * @var string $runUrl
+ * @var string $runProductUrl
+ * @var \IngestionEngine\Connector\Block\Adminhtml\Import $block
+ */
+?>
+<div class="ingestionengine-connector-uploader" style="min-height: 100px;">
+  <div class="ingestionengine-connector-step step-last">
+      <h2><?php echo __('Import Action:') ?></h2>
+    <button type="button" class="primary" onclick="launch()">
+            <span class="ui-button-text">
+                <span><?php echo __('Import') ?></span>
+            </span>
+    </button>
+  </div>
+</div>
+
+<ul class="ingestionengine-connector-console">
+  <li class="selected"><?php echo __('Waiting for import...') ?></li>
+</ul>
+
+<script>
+require(
+    ["IngestionEngine_Connector/js/ingestionengine_connector"],
+    function (ingestionengineConnector) {
+      ingestionengineConnector.init('<?php echo $runUrl; ?>', '<?php echo $runProductUrl; ?>', '.ingestionengine-connector-console');
+      window.IngestionEngine_Connector = ingestionengineConnector;
+    }
+);
+
+function launch () {
+    IngestionEngine_Connector.type('product', this)
+    window.IngestionEngine_Connector.runProduct();
+};
+</script>
