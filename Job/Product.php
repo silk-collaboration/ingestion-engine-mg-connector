@@ -1104,12 +1104,12 @@ class Product extends JobImport
      */
     public function importFiles()
     {
-//        if (!$this->configHelper->isFileImportEnabled()) {
-//            $this->setStatus(false);
-//            $this->setMessage(__('File import is not enabled'));
-//
-//            return;
-//        }
+        if (!$this->configHelper->isFileImportEnabled()) {
+            $this->setStatus(false);
+            $this->setMessage(__('File import is not enabled'));
+
+            return;
+        }
 
         /** @var array $stores */
         $stores = array_merge(
@@ -2380,7 +2380,12 @@ class Product extends JobImport
 
                 if (!$this->configHelper->mediaFileExists($name)) {
                     /** @var ResponseInterface $binary */
-                    $binary = file_get_contents($row[$image]);
+
+                    try {
+                        $binary = file_get_contents($row[$image]);
+                    } catch (Exception $e) {
+                        echo "$row[$image] image download error";
+                    }
                     $this->configHelper->saveMediaFile($filePath, $binary);
                 }
 

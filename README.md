@@ -9,6 +9,19 @@ With IngestionEngine Connector for Magento 2, you can import products
 ### Commandline Usage:
 `php bin/magento ingestionengine_connector:import --code=product`
 
+### Installation
+`composer require ingestion-engine/connector:dev-master`
+
+
+`php bin/magento module:enable IngestionEngine_Connector`
+
+`php bin/magento setup:db:status`
+
+`php bin/magento setup:upgrade`
+
+`php bin/magento cache:flush`
+
+
 ### Requirements:
 
 * tcdent/php-restclient
