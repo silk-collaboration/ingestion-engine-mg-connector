@@ -16,4 +16,4 @@ With IngestionEngine Connector for Magento 2, you can import products
 * Database encoding must be UTF-8
 
 ### About IngestionEngine
-https://ie.silksoftware.com/
+https://www.silksoftware.com/modules/product-data-ingestion-engine/
