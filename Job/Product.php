@@ -339,37 +339,84 @@ class Product extends JobImport
     public function insertData()
     {
         /** @var string|int $paginationSize */
-        $paginationSize = $this->configHelper->getPaginationSize();
+//        $products_total  = $this->ingestionengineclient->getProductsTotal(); // debug
         /** @var int $index */
         $index = 0;
-        $products  = $this->ingestionengineclient->getProducts(false);
-               /**
+        $products_total = 600;
+//        if($products_total > 75000)
+        if($products_total > 500) {
+
+            $this->setMessage("$products_total products loading");
+            $page_limit = $this->configHelper->getPaginationSize();
+            $offset = $page_limit;
+            $total_count = $products_total;
+            $retries = 0;
+            $max_retries = 5;
+            while($offset < $total_count){
+                $this->setMessage("$offset loading");
+                $resp = $this->ingestionengineclient->getProductsPagination($offset);
+                if(!$resp || !$resp->data){
+                    if($max_retries <= $retries){
+                        $retries++;
+                        sleep(5);
+                        continue;
+                    }else {
+                        break;
+                    }
+
+                }
+                $products = $resp->data->list;
+                foreach ($products as $product) {
+                    $product = (array)$product;
+                    $index++;
+                    /** @var bool $result */
+                    $result = $this->entitiesHelper->insertDataFromApi($product, $this->getCode());
+                    if (!$result) {
+                        $this->setMessage('Could not insert Product data in temp table');
+                        $this->stop(true);
+
+                        return;
+                    }
+                }
+
+
+                $pagination = $resp->data->pagination;
+                $offset = $pagination->offset + $page_limit;
+            }
+
+        }else{
+            $this->setMessage("start products loading");
+            $products  = $this->ingestionengineclient->getProducts(false);
+
+            /**
              * @var int     $index
              * @var mixed[] $product
              */
-        foreach ($products as $product) {
-            /**
-             * @var string $attributeMetric
-             */
-            $product = (array) $product;
-            /** @var bool $result */
-            $result = $this->entitiesHelper->insertDataFromApi($product, $this->getCode());
-            if (!$result) {
-                $this->setMessage('Could not insert Product data in temp table');
+            foreach ($products as $product) {
+                /**
+                 * @var string $attributeMetric
+                 */
+                $product = (array) $product;
+                /** @var bool $result */
+                $result = $this->entitiesHelper->insertDataFromApi($product, $this->getCode());
+                if (!$result) {
+                    $this->setMessage('Could not insert Product data in temp table');
+                    $this->stop(true);
+
+                    return;
+                }
+
+                $index++;
+            }
+
+            if (empty($index)) {
+                $this->setMessage('No Product data to insert in temp table');
                 $this->stop(true);
 
                 return;
             }
-
-            $index++;
         }
 
-        if (empty($index)) {
-            $this->setMessage('No Product data to insert in temp table');
-            $this->stop(true);
-
-            return;
-        }
 
         $this->setMessage(__('%1 line(s) found', $index));
     }
@@ -2380,11 +2427,11 @@ class Product extends JobImport
 
                 if (!$this->configHelper->mediaFileExists($name)) {
                     /** @var ResponseInterface $binary */
-
                     try {
                         $binary = file_get_contents($row[$image]);
+                        error_log("$name saving image");
                     } catch (Exception $e) {
-                        echo "$row[$image] image download error";
+                        error_log("$row[$image] image download error");
                     }
                     $this->configHelper->saveMediaFile($filePath, $binary);
                 }

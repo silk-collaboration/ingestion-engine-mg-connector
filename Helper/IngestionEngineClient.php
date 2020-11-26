@@ -75,6 +75,8 @@ class IngestionEngineClient
             return false;
         }
 
+        error_log( ">>> getting auth ..... .......");
+
         $api = new RestClient([
             'base_url' => $baseUri,
         ]);
@@ -101,6 +103,7 @@ class IngestionEngineClient
                 }
             }
         }
+        error_log( ">>> got auth ..... .......");
     }
 
     /**
@@ -112,6 +115,7 @@ class IngestionEngineClient
     {
         $products = [];
         if($this->authToken) {
+            error_log( ">> has auth token");
             $this->getIngestionEngineClient();
         }
         if($this->authToken)
@@ -144,11 +148,12 @@ class IngestionEngineClient
                     $products = $resp->data->list;
                     $pagination = $resp->data->pagination;
                     $offset = $page_limit;
-                    $total_count = $pagination->totalCount;
+                    $total_count = $pagination->totalCount; //debug
+                    $total_count = 2000;
                     $retries = 0;
                     $max_retries = 5;
                     while($offset < $total_count){
-
+                        error_log( ">>> get all products begin ..... $offset .......");
 
                         $result = $data_api->get("products/variants",['limit' => $page_limit, 'offset' => $offset]);
                         if($result->info->http_code == 200){
@@ -169,6 +174,8 @@ class IngestionEngineClient
                         }else{
                             break;
                         }
+
+                        error_log( ">>> get all products end ..... $offset .......");
                     }
 
                 }
@@ -179,6 +186,74 @@ class IngestionEngineClient
 
         }
         return $products;
+    }
+
+
+    /**
+     * Retrieve IngestionEngine products total
+     *
+     * @return getIngestionEngineProducts
+     */
+    public function getProductsTotal()
+    {
+        $total = 0;
+        if ($this->authToken) {
+            $this->getIngestionEngineClient();
+        }
+        if ($this->authToken) {
+            /** @var string $baseUri */
+            $baseUri = $this->configHelper->getIngestionEngineApiBaseUrl();
+            $data_api = new RestClient([
+                'base_url' => $baseUri,
+                'headers' => ['authToken' => $this->authToken],
+            ]);
+
+            $result = $data_api->get("products/variants", ['limit' => 1]);
+            if ($result->info->http_code == 200) {
+                $resp = $result->decode_response();
+                $total = $resp->data->pagination->totalCount;
+            }
+        }
+        return $total;
+    }
+    /**
+     * Retrieve IngestionEngine products
+     *
+     * @return getIngestionEngineProducts
+     */
+    public function getProductsPagination($offset=0)
+    {
+        error_log( ">>> get Pagination products begin ..... $offset .......");
+        $resp = null;
+        if($this->authToken) {
+            $this->getIngestionEngineClient();
+        }
+        if($this->authToken)
+        {
+            /** @var string $baseUri */
+            $baseUri = $this->configHelper->getIngestionEngineApiBaseUrl();
+            $data_api = new RestClient([
+                'base_url' => $baseUri,
+                'headers' => ['authToken' => $this->authToken],
+            ]);
+
+
+            $data_api = new RestClient([
+                'base_url' => $baseUri,
+                'headers' => ['authToken' => $this->authToken],
+            ]);
+
+            $page_limit = $this->configHelper->getPaginationSize();
+
+
+            $result = $data_api->get("products/variants",['limit' => $page_limit, 'offset' => $offset]);
+            if($result->info->http_code == 200){
+                $resp = $result->decode_response();
+            }
+
+        }
+        error_log( ">>> get Pagination products end ..... $offset .......");
+        return $resp;
     }
 
 }
