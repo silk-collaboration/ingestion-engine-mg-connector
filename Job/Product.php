@@ -351,9 +351,7 @@ class Product extends JobImport
             $this->setMessage("start products loading");
             $products = $this->ingestionengineclient->getProducts(false);
         }
-        //debug
-        $products = array_slice($products,0,20);
-
+        
         /**
          * @var int     $index
          * @var mixed[] $product
@@ -2395,7 +2393,6 @@ class Product extends JobImport
                     /** @var ResponseInterface $binary */
                     try {
                         $binary = file_get_contents($row[$image]);
-                        error_log("$name saving image");
                     } catch (Exception $e) {
                         error_log("$row[$image] image download error");
                     }

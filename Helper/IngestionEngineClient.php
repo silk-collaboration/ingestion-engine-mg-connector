@@ -75,7 +75,6 @@ class IngestionEngineClient
             return false;
         }
 
-        error_log( ">>> getting auth ..... .......");
 
         $api = new RestClient([
             'base_url' => $baseUri,
@@ -103,7 +102,6 @@ class IngestionEngineClient
                 }
             }
         }
-        error_log( ">>> got auth ..... .......");
     }
 
     /**
@@ -153,7 +151,6 @@ class IngestionEngineClient
                     $retries = 0;
                     $max_retries = 5;
                     while($offset < $total_count){
-                        error_log( ">>> get all products begin ..... $offset .......");
 
                         $result = $data_api->get("products/variants",['limit' => $page_limit, 'offset' => $offset]);
                         if($result->info->http_code == 200){
@@ -175,7 +172,6 @@ class IngestionEngineClient
                             break;
                         }
 
-                        error_log( ">>> get all products end ..... $offset .......");
                     }
 
                 }
@@ -223,7 +219,6 @@ class IngestionEngineClient
      */
     public function getProductsPagination($offset=0)
     {
-        error_log( ">>> get Pagination products begin ..... $offset .......");
         $resp = null;
         if($this->authToken) {
             $this->getIngestionEngineClient();
@@ -239,15 +234,12 @@ class IngestionEngineClient
 
             $page_limit = $this->configHelper->getPaginationSize();
 
-            error_log( ">>> get Pagination products request start ..... $offset .......");
             $result = $data_api->get("products/variants",['limit' => $page_limit, 'offset' => $offset]);
-            error_log( ">>> get Pagination products request finish ..... $offset .......");
             if($result->info->http_code == 200){
                 $resp = $result->decode_response();
             }
 
         }
-        error_log( ">>> get Pagination products end ..... $offset .......");
         return $resp;
     }
 
@@ -258,7 +250,6 @@ class IngestionEngineClient
      */
     public function getProductsFromFile()
     {
-        error_log( ">>> get file products begin  .......");
         $ret = null;
         if($this->authToken) {
             $this->getIngestionEngineClient();
@@ -273,26 +264,21 @@ class IngestionEngineClient
             ]);
 
             $page_limit = $this->configHelper->getPaginationSize();
-            error_log( ">>> get file products request start .......");
             $result = $data_api->get("products/files", ['type' => 1 ]);
-            error_log( ">>> get file products request finish ...");
             if($result->info->http_code == 200){
                 $resp = $result->decode_response();
                 $file_url = $resp->data->fileUrl;
-                $file_url = '/Users/bruce/Downloads/all_products_032ea806-9b03-4164-8497-f5db7cb740ae.json'; // debug
                 $ctx = stream_context_create(array('http'=>
                     array(
                         'timeout' => 2400,  //2400 Seconds is 40 Minutes
                     )
                 ));
 
-                error_log( ">>> get file products request finish .... $file_url ...");
                 $json_str = file_get_contents($file_url, false, $ctx);
                 $ret = json_decode($json_str, true);
             }
 
         }
-        error_log( ">>> get file products end .......");
         return $ret;
     }
 
