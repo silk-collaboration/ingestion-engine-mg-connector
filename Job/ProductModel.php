@@ -125,6 +125,8 @@ class ProductModel extends Import
         // TODO
         $products = [];
 
+        error_log( ">>> get products in ..... Product model .......");
+
         $base_url = "https://ie.ingestionengine.net/api/v1/";
         $api = new RestClient([
             'base_url' => $base_url,

@@ -13,11 +13,11 @@
     <default>
         <ingestionengine_connector>
             <ingestionengine_api>
-                <base_url>http://ie.ingestionengine.net/</base_url>
+                <base_url>https://ie.silksoftware.com/api/v1/</base_url>
                 <username>admin</username>
                 <client_id>1_demo_client_id</client_id>
                 <client_secret>demo_secret</client_secret>
-                <pagination_size>100</pagination_size>
+                <pagination_size>500</pagination_size>
             </ingestionengine_api>
             <products_filters>
                 <mode>standard</mode>

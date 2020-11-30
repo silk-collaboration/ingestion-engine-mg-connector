@@ -237,16 +237,11 @@ class IngestionEngineClient
                 'headers' => ['authToken' => $this->authToken],
             ]);
 
-
-            $data_api = new RestClient([
-                'base_url' => $baseUri,
-                'headers' => ['authToken' => $this->authToken],
-            ]);
-
             $page_limit = $this->configHelper->getPaginationSize();
 
-
+            error_log( ">>> get Pagination products request start ..... $offset .......");
             $result = $data_api->get("products/variants",['limit' => $page_limit, 'offset' => $offset]);
+            error_log( ">>> get Pagination products request finish ..... $offset .......");
             if($result->info->http_code == 200){
                 $resp = $result->decode_response();
             }
@@ -254,6 +249,51 @@ class IngestionEngineClient
         }
         error_log( ">>> get Pagination products end ..... $offset .......");
         return $resp;
+    }
+
+    /**
+     * Retrieve IngestionEngine products from file
+     *
+     * @return getIngestionEngineProducts
+     */
+    public function getProductsFromFile()
+    {
+        error_log( ">>> get file products begin  .......");
+        $ret = null;
+        if($this->authToken) {
+            $this->getIngestionEngineClient();
+        }
+        if($this->authToken)
+        {
+            /** @var string $baseUri */
+            $baseUri = $this->configHelper->getIngestionEngineApiBaseUrl();
+            $data_api = new RestClient([
+                'base_url' => $baseUri,
+                'headers' => ['authToken' => $this->authToken],
+            ]);
+
+            $page_limit = $this->configHelper->getPaginationSize();
+            error_log( ">>> get file products request start .......");
+            $result = $data_api->get("products/files", ['type' => 1 ]);
+            error_log( ">>> get file products request finish ...");
+            if($result->info->http_code == 200){
+                $resp = $result->decode_response();
+                $file_url = $resp->data->fileUrl;
+                $file_url = '/Users/bruce/Downloads/all_products_032ea806-9b03-4164-8497-f5db7cb740ae.json'; // debug
+                $ctx = stream_context_create(array('http'=>
+                    array(
+                        'timeout' => 2400,  //2400 Seconds is 40 Minutes
+                    )
+                ));
+
+                error_log( ">>> get file products request finish .... $file_url ...");
+                $json_str = file_get_contents($file_url, false, $ctx);
+                $ret = json_decode($json_str, true);
+            }
+
+        }
+        error_log( ">>> get file products end .......");
+        return $ret;
     }
 
 }
