@@ -339,14 +339,23 @@ class Product extends JobImport
     public function insertData()
     {
         /** @var string|int $paginationSize */
-        $paginationSize = $this->configHelper->getPaginationSize();
+        $products_total  = $this->ingestionengineclient->getProductsTotal();
         /** @var int $index */
         $index = 0;
-        $products  = $this->ingestionengineclient->getProducts(false);
-               /**
-             * @var int     $index
-             * @var mixed[] $product
-             */
+        if($products_total > 50000) {
+
+            $this->setMessage("$products_total products loading");
+            $products  = $this->ingestionengineclient->getProductsFromFile();
+
+        }else {
+            $this->setMessage("start products loading");
+            $products = $this->ingestionengineclient->getProducts(false);
+        }
+        
+        /**
+         * @var int     $index
+         * @var mixed[] $product
+         */
         foreach ($products as $product) {
             /**
              * @var string $attributeMetric
@@ -370,6 +379,8 @@ class Product extends JobImport
 
             return;
         }
+
+
 
         $this->setMessage(__('%1 line(s) found', $index));
     }
@@ -2380,13 +2391,12 @@ class Product extends JobImport
 
                 if (!$this->configHelper->mediaFileExists($name)) {
                     /** @var ResponseInterface $binary */
-
                     try {
                         $binary = file_get_contents($row[$image]);
                     } catch (Exception $e) {
-                        echo "$row[$image] image download error";
+                        error_log("$row[$image] image download error");
                     }
-                    $this->configHelper->saveMediaFile($filePath, $binary);
+                    if(isset($binary)) $this->configHelper->saveMediaFile($filePath, $binary);
                 }
 
                 /** @var string $file */

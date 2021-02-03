@@ -322,10 +322,10 @@
                         <item name="method" xsi:type="string">matchEntities</item>
                         <item name="comment" xsi:type="string">Match code with Magento ID</item>
                     </item>
-                    <item name="8" xsi:type="array">
-                        <item name="method" xsi:type="string">updateAttributeSetId</item>
-                        <item name="comment" xsi:type="string">Match family code with Magento ID</item>
-                    </item>
+                    <!--<item name="8" xsi:type="array">-->
+                        <!--<item name="method" xsi:type="string">updateAttributeSetId</item>-->
+                        <!--<item name="comment" xsi:type="string">Match family code with Magento ID</item>-->
+                    <!--</item>-->
                     <item name="9" xsi:type="array">
                         <item name="method" xsi:type="string">updateOption</item>
                         <item name="comment" xsi:type="string">Update column values for options</item>

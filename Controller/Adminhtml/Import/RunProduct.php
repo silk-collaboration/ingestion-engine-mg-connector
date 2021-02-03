@@ -80,7 +80,7 @@ class RunProduct extends Action
     public function execute()
     {
 
-        $families = array('test run product');
+        $families = array("1");
 //        /** @var string[] $families */
 //        $families = $this->jobProduct->getFamiliesToImport();
 //
