@@ -2396,7 +2396,7 @@ class Product extends JobImport
                     } catch (Exception $e) {
                         error_log("$row[$image] image download error");
                     }
-                    $this->configHelper->saveMediaFile($filePath, $binary);
+                    if(isset($binary)) $this->configHelper->saveMediaFile($filePath, $binary);
                 }
 
                 /** @var string $file */
