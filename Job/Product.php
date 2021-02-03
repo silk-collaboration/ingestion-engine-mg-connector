@@ -2392,11 +2392,11 @@ class Product extends JobImport
                 if (!$this->configHelper->mediaFileExists($name)) {
                     /** @var ResponseInterface $binary */
                     try {
-                        $binary = file_get_contents($row[$image]);
+                        $binary = @file_get_contents($row[$image]);
                     } catch (Exception $e) {
                         error_log("$row[$image] image download error");
                     }
-                    if(isset($binary)) $this->configHelper->saveMediaFile($filePath, $binary);
+                    if(isset($binary) && $binary) $this->configHelper->saveMediaFile($filePath, $binary);
                 }
 
                 /** @var string $file */
