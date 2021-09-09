@@ -139,8 +139,43 @@ class IngestionEngineClient
                     'headers' => ['authToken' => $this->authToken],
                 ]);
 
+                $mode = $this->configHelper->getUpdatedMode();
+                $extra_params = [];
+                if ($mode == "SINCE LAST N DAYS") {
+                    $since_days = $this->configHelper->getUpdatedSinceFilter();
+                    if (!empty($since_days)) {
+                        $since_days_timestamp = $since_days * 86400;
+                        $extra_params += [
+                            "timeOffset" => $since_days_timestamp
+                        ];
+                    }
+                }
+                if ($mode == "BETWEEN") {
+                    $max = $this->configHelper->getUpdatedBetweenBeforeFilter();
+
+                    if (!empty($max)) {
+                        $max .= ' 23:59:59';
+                        $max_timestamp = strtotime($max);
+                        $extra_params += [
+                            "maxUpdated" => $max_timestamp
+                        ];
+                    }
+                    $min = $this->configHelper->getUpdatedBetweenAfterFilter();
+
+                    if (!empty($min)) {
+                        $min .= ' 00:00:00';
+                        $min_timestamp = strtotime($min);
+                        $extra_params += [
+                            "minUpdated" => $min_timestamp
+                        ];
+                    }
+                }
+
+
                 $page_limit = $this->configHelper->getPaginationSize();
-                $result = $data_api->get("products/variants",['limit' => $page_limit]);
+                $result = $data_api->get("products/variants",array_merge(
+                    ['limit' => $page_limit], $extra_params
+                ));
                 if($result->info->http_code == 200){
                     $resp = $result->decode_response();
                     $products = $resp->data->list;
@@ -152,7 +187,9 @@ class IngestionEngineClient
                     $max_retries = 5;
                     while($offset < $total_count){
 
-                        $result = $data_api->get("products/variants",['limit' => $page_limit, 'offset' => $offset]);
+                        $result = $data_api->get("products/variants", array_merge(
+                            ['limit' => $page_limit, 'offset' => $offset], $extra_params
+                        ));
                         if($result->info->http_code == 200){
                             $resp = $result->decode_response();
                             if(!$resp || !$resp->data){
