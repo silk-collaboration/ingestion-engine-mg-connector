@@ -182,7 +182,6 @@ class IngestionEngineClient
                     $pagination = $resp->data->pagination;
                     $offset = $page_limit;
                     $total_count = $pagination->totalCount; //debug
-                    $total_count = 2000;
                     $retries = 0;
                     $max_retries = 5;
                     while($offset < $total_count){
