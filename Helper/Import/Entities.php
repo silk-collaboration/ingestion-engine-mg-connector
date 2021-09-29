@@ -807,25 +807,30 @@ class Entities
      */
     public function formatMediaName($filename)
     {
-        /** @var string[] $filenameParts */
         $filenameParts = explode('.', $filename);
         // Get the extention
         /** @var string $extension */
+
         $extension = array_pop($filenameParts);
-        // Get the hash
-        $filename = implode('.', $filenameParts);
-        $filename = explode('_', $filename);
-        /** @var string $shortHash */
-        $shortHash = array_shift($filename);
+        $url_path = implode('_', $filenameParts);
+        $filename = basename($url_path);
+
+        $params = explode('/', $url_path);
+        // print_r($params);
+        $shortHash = array_pop($params);
+        array_shift($params);
+        $shortHash .= array_shift($params);
         $shortHash = substr($shortHash, 0, 4);
-        $filename  = implode('_', $filename);
+
+        $filename .= '_' . implode('_', $params);
         // Form the final file name
         /** @var string $shortName */
         $shortName = substr($filename, 0, 79);
         /** @var string $finalName */
         $finalName = $shortName . '_' . $shortHash . '.' . $extension;
-
+    
         return $finalName;
+
     }
     /**
      * Description addJoinForContentStaging function
