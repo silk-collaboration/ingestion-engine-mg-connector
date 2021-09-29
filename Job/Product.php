@@ -1207,7 +1207,7 @@ class Product extends JobImport
                 /** @var array $media */
                 $file = $this->ingestionengineClient->getProductMediaFileApi()->get($row[$attribute]);
                 /** @var string $name */
-                $name = $this->entitiesHelper->formatMediaName(basename($file['code']));
+                $name = $this->entitiesHelper->formatMediaName($file['code']);
                 /** @var string $filePath */
                 $filePath = $this->configHelper->getMediaFullPath($name, $this->configHelper->getFilesMediaDirectory());
 
